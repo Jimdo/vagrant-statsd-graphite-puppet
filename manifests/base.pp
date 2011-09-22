@@ -35,36 +35,47 @@ class statsd {
 
 }
 
-class graphite::common {
+class carbon {
+
+ $carbon_url = "http://graphite.wikidot.com/local--files/downloads/carbon-0.9.8.tar.gz"
+
+ $carbon_loc = "$build_dir/carbon.tar.gz"
 
  $build_dir = "/tmp"
 
- $whisper_url = "http://graphite.wikidot.com/local--files/downloads/whisper-0.9.6.tar.gz"
+ include graphite
 
- $whisper_loc = "$build_dir/whisper.tar.gz"
+ service { carbon :
+    ensure => running
+ }
 
- $webapp_url = "http://graphite.wikidot.com/local--files/downloads/graphite-web-0.9.6.tar.gz"
+ exec { "download-graphite-carbon":
+   command => "wget -O $carbon_loc $carbon_url",
+   creates => "$carbon_loc"
+ } 
+
+ exec { "unpack-carbon":
+   command => "tar -zxvf $carbon_loc",
+   cwd => $build_dir,
+   subscribe => Exec[download-graphite-carbon],
+   refreshonly => true,
+ }
+
+ exec { "install-carbon" :
+   command => "python setup.py install",
+   cwd => "$build_dir/carbon-0.9.8",
+   require => Exec[unpack-carbon],
+   creates => "/usr/local/bin/carbon-info.py",
+  }
+}
+
+class graphite {
+
+ $build_dir = "/tmp"
+
+ $webapp_url = "http://graphite.wikidot.com/local--files/downloads/graphite-web-0.9.8.tar.gz"
   
  $webapp_loc = "$build_dir/graphite-web.tar.gz"
-
- exec { "download-graphite-whisper":
-        command => "wget -O $whisper_loc $whisper_url",
-        creates => "$whisper_loc"
-   } 
-
-   exec { "unpack-whisper":
-        command => "tar -zxvf $whisper_loc",
-        cwd => $build_dir,
-        subscribe => Exec[download-graphite-whisper],
-        refreshonly => true,
-   }
-
-  exec { "install-whisper" :
-        command => "python setup.py install",
-        cwd => "$build_dir/whisper-0.9.6",
-        require => Exec[unpack-whisper],
-        creates => "/usr/local/bin/whisper-info.py",
-  }
 
   exec { "download-graphite-webapp":
         command => "wget -O $webapp_loc $webapp_url",
@@ -81,7 +92,7 @@ class graphite::common {
    exec { "install-webapp":
      command => "python setup.py install",
      cwd => "$build_dir/graphite-web-0.9.6",
-     require => [ Exec[unpack-webapp], Exec[unpack-whisper] ],
+     require => Exec[unpack-webapp],
      creates => "/opt/graphite"
    }
 
@@ -180,23 +191,16 @@ class graphite::common {
     require => [ File["/opt/graphite/storage/log/webapp/"], File["/opt/graphite/storage/graphite.db"] ],
   }
 
-}
-
-class graphite::ubuntu {
-
-  $apache_user = "www-data"
-
   package {
         [ apache2, python-ldap, python-cairo, python-django, python-simplejson, libapache2-mod-python, python-memcache, python-pysqlite2]: ensure => latest;
   }
 
+  package {
+    python-whisper :
+      ensure => '0.9.8-1'
+  }
+
 }
 
-class graphite::debian inherits graphite::ubuntu {
-}
-
-
-
-include graphite::common
-include "graphite::$operatingsystem"
+include carbon
 include statsd
