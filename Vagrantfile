@@ -20,6 +20,8 @@ Vagrant::Config.run do |config|
   # Forward a port from the guest to the host, which allows for outside
   # computers to access the VM, whereas host only networking does not.
   config.vm.forward_port "http", 80, 8080
+  config.vm.forward_port "carbon", 2003, 2003
+  config.vm.forward_port "statsd", 8125, 8125, { :protocol => 'udp' }
 
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
