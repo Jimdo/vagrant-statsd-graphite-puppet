@@ -83,7 +83,7 @@ class carbon {
    command => "python setup.py install",
    cwd => "$build_dir/carbon-0.9.8",
    require => Exec[unpack-carbon],
-   creates => "/usr/local/bin/carbon-info.py",
+   creates => "/opt/graphite/bin/carbon-cache.py",
   }
 }
 
@@ -91,7 +91,7 @@ class graphite {
 
  $build_dir = "/tmp"
 
- $webapp_url = "http://graphite.wikidot.com/local--files/downloads/graphite-web-0.9.8.tar.gz"
+ $webapp_url = "http://launchpad.net/graphite/1.0/0.9.8/+download/graphite-web-0.9.8.tar.gz"
   
  $webapp_loc = "$build_dir/graphite-web.tar.gz"
 
@@ -109,18 +109,18 @@ class graphite {
 
    exec { "install-webapp":
      command => "python setup.py install",
-     cwd => "$build_dir/graphite-web-0.9.6",
+     cwd => "$build_dir/graphite-web-0.9.8",
      require => Exec[unpack-webapp],
-     creates => "/opt/graphite"
+     creates => "/opt/graphite/webapp"
    }
 
-  file { "/opt/graphite/storage":
+  file { [ "/opt/graphite/storage", "/opt/graphite/storage/whisper" ]:
     owner => "www-data",
     subscribe => Exec["install-webapp"],
-    mode => "0775"
+    mode => "0775",
   }
 
-   exec { "init-db":
+  exec { "init-db":
      command => "python manage.py syncdb --noinput",
      cwd => "/opt/graphite/webapp/graphite",
      creates => "/opt/graphite/storage/graphite.db",
@@ -129,7 +129,7 @@ class graphite {
    }
 
   file { "/opt/graphite/webapp/graphite/initial_data.json" :
-     subscribe => File["/opt/graphite/storage"],
+     require => File["/opt/graphite/storage"],
      ensure => present,
      content => '
 [
