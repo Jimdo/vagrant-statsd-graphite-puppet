@@ -37,16 +37,34 @@ class statsd {
 
 class carbon {
 
- $carbon_url = "http://graphite.wikidot.com/local--files/downloads/carbon-0.9.8.tar.gz"
+ $build_dir = "/tmp"
+
+ $carbon_url = "http://launchpad.net/graphite/1.0/0.9.8/+download/carbon-0.9.8.tar.gz"
 
  $carbon_loc = "$build_dir/carbon.tar.gz"
 
- $build_dir = "/tmp"
-
  include graphite
 
+ file { "/etc/init.d/carbon" :
+   source => "/tmp/vagrant-puppet/manifests/files/carbon",
+   ensure => present
+ }
+
+ file { "/opt/graphite/conf/carbon.conf" :
+   source => "/tmp/vagrant-puppet/manifests/files/carbon.conf",
+   ensure => present,
+   notify => Service[carbon],
+ }
+
+ file { "/opt/graphite/conf/storage-schemas.conf" :
+   source => "/tmp/vagrant-puppet/manifests/files/storage-schemas.conf",
+   ensure => present,
+   notify => Service[carbon],
+ }
+
  service { carbon :
-    ensure => running
+    ensure => running,
+    require => File["/etc/init.d/carbon"]
  }
 
  exec { "download-graphite-carbon":
