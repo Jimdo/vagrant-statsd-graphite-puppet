@@ -45,6 +45,10 @@ class carbon {
 
  include graphite
 
+  package { "python-twisted" :
+    ensure => latest
+  }
+
  file { "/etc/init.d/carbon" :
    source => "/tmp/vagrant-puppet/manifests/files/carbon",
    ensure => present
@@ -60,6 +64,12 @@ class carbon {
    source => "/tmp/vagrant-puppet/manifests/files/storage-schemas.conf",
    ensure => present,
    notify => Service[carbon],
+ }
+
+ file { "/var/log/carbon" :
+   ensure => directory,
+   owner => www-data,
+   group => www-data,
  }
 
  service { carbon :
