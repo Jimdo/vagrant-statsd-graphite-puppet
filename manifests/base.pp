@@ -174,9 +174,15 @@ class graphite {
   file { "/opt/graphite/storage/log/webapp/":
     ensure => "directory",
     owner => "www-data",
-    mode => "0664",
+    mode => "0775",
     subscribe => Exec["install-webapp"],
   }
+
+  file { "/opt/graphite/webapp/graphite/local_settings.py" :
+    source => "/tmp/vagrant-puppet/manifests/files/local_settings.py",
+    ensure => present,
+    require => File["/opt/graphite/storage"]
+ }
 
   file { "/etc/apache2/sites-available/default" :
     content =>' 
