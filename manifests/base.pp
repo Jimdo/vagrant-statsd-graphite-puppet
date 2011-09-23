@@ -34,7 +34,7 @@ class statsd {
    }
 
    # for now
-   package { "statds" :
+   package { "statsd" :
      provider => "dpkg",
      source => "/vagrant/statsd_0.0.1_all.deb",
      ensure => installed,
