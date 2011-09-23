@@ -38,6 +38,7 @@ class statsd {
      provider => "dpkg",
      source => "/vagrant/statsd_0.0.1_all.deb",
      ensure => installed,
+     require => Package[nodejs],
    }
 
 }
@@ -65,12 +66,14 @@ class carbon {
    source => "/tmp/vagrant-puppet/manifests/files/carbon.conf",
    ensure => present,
    notify => Service[carbon],
+   subscribe => Exec[install-carbon],
  }
 
  file { "/opt/graphite/conf/storage-schemas.conf" :
    source => "/tmp/vagrant-puppet/manifests/files/storage-schemas.conf",
    ensure => present,
    notify => Service[carbon],
+   subscribe => Exec[install-carbon],
  }
 
  file { "/var/log/carbon" :
