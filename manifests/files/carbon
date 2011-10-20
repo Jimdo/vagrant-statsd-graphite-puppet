@@ -5,9 +5,7 @@
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Example initscript
-# Description:       This file should be used to construct scripts to be
-#                    placed in /etc/init.d.
+# Short-Description: carbon database
 ### END INIT INFO
 
 # Author: Foo Bar <foobar@baz.org>
@@ -19,11 +17,11 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="Description of the service"
+DESC="carbon database"
 NAME=carbon
 DAEMON=/usr/bin/python
 PIDFILE=/opt/graphite/storage/carbon-cache.pid
-DAEMON_ARGS="/opt/graphite/bin/carbon-cache.py --logdir=/var/log/carbon start --pidfile=$PIDFILE"
+DAEMON_ARGS="/opt/graphite/bin/carbon-cache.py --logdir=/var/log/carbon/ --pidfile=$PIDFILE start"
 SCRIPTNAME=/etc/init.d/$NAME
 USER=www-data
 START_STOP_DAEMON_OPTIONS="--chuid=$USER:$USER --background --chdir=/opt/graphite/"
