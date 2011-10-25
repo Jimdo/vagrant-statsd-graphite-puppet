@@ -47,7 +47,7 @@ class carbon {
 
  $build_dir = "/tmp"
 
- $carbon_url = "http://launchpad.net/graphite/1.0/0.9.8/+download/carbon-0.9.8.tar.gz"
+ $carbon_url = "http://launchpad.net/graphite/0.9/0.9.8/+download/carbon-0.9.8.tar.gz"
 
  $carbon_loc = "$build_dir/carbon.tar.gz"
 
