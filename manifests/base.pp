@@ -1,5 +1,12 @@
 Exec {
-        path => ["/usr/bin", "/usr/sbin", '/bin']
+    path => ["/usr/bin", "/usr/sbin", '/bin']
+}
+
+Exec["apt-get-update"] -> Package <| |>
+
+exec { "apt-get-update" :
+    command => "/usr/bin/apt-get update",
+    require => File["/etc/apt/preferences"]
 }
 
 file { "/etc/apt/preferences" :
@@ -47,7 +54,7 @@ class carbon {
 
  $build_dir = "/tmp"
 
- $carbon_url = "http://launchpad.net/graphite/0.9/0.9.8/+download/carbon-0.9.8.tar.gz"
+ $carbon_url = "http://launchpad.net/graphite/0.9/0.9.9/+download/carbon-0.9.9.tar.gz"
 
  $carbon_loc = "$build_dir/carbon.tar.gz"
 
@@ -90,7 +97,7 @@ class carbon {
  exec { "download-graphite-carbon":
    command => "wget -O $carbon_loc $carbon_url",
    creates => "$carbon_loc"
- } 
+ }
 
  exec { "unpack-carbon":
    command => "tar -zxvf $carbon_loc",
@@ -101,7 +108,7 @@ class carbon {
 
  exec { "install-carbon" :
    command => "python setup.py install",
-   cwd => "$build_dir/carbon-0.9.8",
+   cwd => "$build_dir/carbon-0.9.9",
    require => Exec[unpack-carbon],
    creates => "/opt/graphite/bin/carbon-cache.py",
   }
@@ -111,14 +118,14 @@ class graphite {
 
  $build_dir = "/tmp"
 
- $webapp_url = "http://launchpad.net/graphite/1.0/0.9.8/+download/graphite-web-0.9.8.tar.gz"
-  
+ $webapp_url = "http://launchpad.net/graphite/0.9/0.9.9/+download/graphite-web-0.9.9.tar.gz"
+
  $webapp_loc = "$build_dir/graphite-web.tar.gz"
 
   exec { "download-graphite-webapp":
         command => "wget -O $webapp_loc $webapp_url",
         creates => "$webapp_loc"
-   }      
+   }
 
    exec { "unpack-webapp":
      command => "tar -zxvf $webapp_loc",
@@ -129,7 +136,7 @@ class graphite {
 
    exec { "install-webapp":
      command => "python setup.py install",
-     cwd => "$build_dir/graphite-web-0.9.8",
+     cwd => "$build_dir/graphite-web-0.9.9",
      require => Exec[unpack-webapp],
      creates => "/opt/graphite/webapp"
    }
@@ -145,7 +152,7 @@ class graphite {
      cwd => "/opt/graphite/webapp/graphite",
      creates => "/opt/graphite/storage/graphite.db",
      subscribe => File["/opt/graphite/storage"],
-     require => File["/opt/graphite/webapp/graphite/initial_data.json"]
+     require => [ File["/opt/graphite/webapp/graphite/initial_data.json"], Package["python-django-tagging"] ]
    }
 
   file { "/opt/graphite/webapp/graphite/initial_data.json" :
@@ -236,12 +243,14 @@ class graphite {
   }
 
   package {
-        [ apache2, python-ldap, python-cairo, python-django, python-simplejson, libapache2-mod-python, python-memcache, python-pysqlite2]: ensure => latest;
+        [ apache2, python-ldap, python-cairo, python-django, python-django-tagging, python-simplejson, libapache2-mod-python, python-memcache, python-pysqlite2]: ensure => latest;
   }
 
   package {
     python-whisper :
-      ensure => '0.9.8-1'
+      ensure   => installed,
+      provider => dpkg,
+      source   => "/vagrant/python-whisper_0.9.9-1_all.deb",
   }
 
 }
