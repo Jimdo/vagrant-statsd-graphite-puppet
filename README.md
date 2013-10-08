@@ -1,13 +1,13 @@
-== statsd + graphite to go ==
+# statsd + graphite to go
 
-provision a virtual machine with vagrant and puppet to play around with statsd and graphite
+Provision a virtual machine with vagrant and puppet to play around with statsd and graphite
 
-goodies:
+## Details:
 
- * debian package for statsd (github.com/etsy) included 
+ * debian package for statsd (github.com/etsy) included
  * port forwardings enabled
-  * graphite: http://localhost:8080/
-  * statsd: 8125:udp
+ * graphite: http://localhost:8080/
+ * statsd: 8125:udp
 
 ## Installation
 
@@ -15,15 +15,10 @@ goodies:
 git clone https://github.com/Jimdo/vagrant-statsd-graphite-puppet.git
 cd vagrant-statsd-graphite-puppet
 vagrant up
+open http://localhost:8080/
 ```
-then http://localhost:8080/
 
-
-TODO:
-
- * put basebox somewhere public
-
-## Contributors 
+## Contributors
 
 Created by jimdo https://github.com/Jimdo
 
