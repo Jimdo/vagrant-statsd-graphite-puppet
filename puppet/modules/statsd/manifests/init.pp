@@ -6,7 +6,7 @@ class statsd {
 
    package { "statsd" :
      provider => "dpkg",
-     source => "/vagrant/statsd_0.0.1_all.deb",
+     source => "/vagrant/statsd_0.6.0-1_all.deb",
      ensure => installed,
      require => Package[nodejs],
    }
