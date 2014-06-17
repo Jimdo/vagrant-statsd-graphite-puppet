@@ -13,19 +13,19 @@ class carbon {
   }
 
  file { "/etc/init.d/carbon" :
-   source => "/tmp/vagrant-puppet/modules-0/carbon/files/carbon",
+   source => "/tmp/vagrant-puppet-1/modules-0/carbon/files/carbon",
    ensure => present,
  }
 
  file { "/opt/graphite/conf/carbon.conf" :
-   source => "/tmp/vagrant-puppet/modules-0/carbon/files/carbon.conf",
+   source => "/tmp/vagrant-puppet-1/modules-0/carbon/files/carbon.conf",
    ensure => present,
    notify => Service[carbon],
    subscribe => Exec[install-carbon],
  }
 
  file { "/opt/graphite/conf/storage-schemas.conf" :
-   source => "/tmp/vagrant-puppet/modules-0/carbon/files/storage-schemas.conf",
+   source => "/tmp/vagrant-puppet-1/modules-0/carbon/files/storage-schemas.conf",
    ensure => present,
    notify => Service[carbon],
    subscribe => Exec[install-carbon],
