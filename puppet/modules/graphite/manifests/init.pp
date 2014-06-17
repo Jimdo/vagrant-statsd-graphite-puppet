@@ -80,7 +80,7 @@ class graphite {
   }
 
   file { "/opt/graphite/webapp/graphite/local_settings.py" :
-    source => "/tmp/vagrant-puppet/modules-0/graphite/files/local_settings.py",
+    source => "/tmp/vagrant-puppet-1/modules-0/graphite/files/local_settings.py",
     ensure => present,
     require => File["/opt/graphite/storage"]
  }
