@@ -18,6 +18,8 @@ vagrant up
 open http://localhost:8080/
 ```
 
+The default account is admin/admin
+
 ## Contributors
 
 Created by jimdo https://github.com/Jimdo
