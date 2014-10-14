@@ -1,14 +1,14 @@
-class carbon($version = '0.9.10') {
+class carbon($version = '0.9.12') {
 
   $build_dir = "/tmp"
 
-  $carbon_url = "http://launchpad.net/graphite/0.9/${version}/+download/carbon-${version}.tar.gz"
+  $carbon_url = "https://github.com/graphite-project/carbon/archive/${version}.tar.gz"
 
   $carbon_loc = "$build_dir/carbon.tar.gz"
 
   class {'graphite':
     version => $version,
-  } 
+  }
 
   file { "/etc/init.d/carbon" :
     source => "puppet:///modules/carbon/carbon",

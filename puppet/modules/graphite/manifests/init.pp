@@ -2,7 +2,7 @@ class graphite($version = '0.9.10') {
 
   $build_dir = "/tmp"
 
-  $webapp_url = "http://launchpad.net/graphite/0.9/${version}/+download/graphite-web-${version}.tar.gz"
+  $webapp_url = "https://github.com/graphite-project/graphite-web/archive/${version}.tar.gz"
 
   $webapp_loc = "$build_dir/graphite-web.tar.gz"
 
@@ -13,18 +13,18 @@ class graphite($version = '0.9.10') {
   package { $python_packages:
     ensure => latest,
   } ->
-  
+
   package { "python-whisper":
     ensure   => installed,
     provider => dpkg,
     source   => "/vagrant/python-whisper_${version}-1_all.deb",
   } ->
-  
+
   exec { "download-graphite-webapp":
     command => "wget -O $webapp_loc $webapp_url",
     creates => "$webapp_loc"
   } ->
-  
+
   exec { "unpack-webapp":
     command => "tar -zxvf $webapp_loc",
     cwd => $build_dir,
@@ -37,20 +37,20 @@ class graphite($version = '0.9.10') {
     cwd => "$build_dir/graphite-web-${version}",
     creates => "/opt/graphite/webapp"
   } ->
-  
+
   file { [ "/opt/graphite/storage", "/opt/graphite/storage/whisper" ]:
     owner => "www-data",
     subscribe => Exec["install-webapp"],
     mode => "0775",
   } ->
-  
+
   exec { "init-db":
     command => "python manage.py syncdb --noinput",
     cwd => "/opt/graphite/webapp/graphite",
     creates => "/opt/graphite/storage/graphite.db",
     subscribe => File["/opt/graphite/storage"],
   } ->
-  
+
   file { "/opt/graphite/webapp/graphite/initial_data.json" :
     ensure => present,
     content => '
