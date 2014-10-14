@@ -47,7 +47,7 @@ class carbon($version = '0.9.12') {
     refreshonly => true,
   }
 
-  # Downgrade Twisted to v12 for graohite
+  # Downgrade Twisted to v12 for graphite
   package{['python-dev','python-pip']:
     require => Anchor['graphite::end'],
   } ->
